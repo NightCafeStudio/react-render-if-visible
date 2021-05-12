@@ -1,0 +1,43 @@
+{
+  "name": "react-render-if-visible",
+  "version": "1.0.0",
+  "description": "Harness the power of Intersection Observers for simple list virtualization in React",
+  "author": "GusRuss89",
+  "license": "Apache-2.0",
+  "repository": "NightCafeStudio/react-render-if-visible",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w"
+  },
+  "dependencies": {
+    "@types/requestidlecallback": "^0.3.1"
+  },
+  "peerDependencies": {
+    "react": ">= 16.8.0 < 2",
+    "react-dom": ">= 16.8.0 < 2"
+  },
+  "devDependencies": {
+    "@types/react": "^16.3.13",
+    "@types/react-dom": "^16.0.5",
+    "babel-core": "^6.26.3",
+    "babel-runtime": "^6.26.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "rollup": "^1.29.0",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "typescript": "^2.8.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "react",
+    "typescript",
+    "npm"
+  ]
+}
