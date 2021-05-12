@@ -37,7 +37,7 @@ export const MyItemList = (items) => (
 
 ## Props
 
-- `defaultHeight?: number` __Default: 300__ An estimate of the element's height.
-- `visibleOffset?: number` __Default: 1000__ How far outside the viewport in pixels should elements be considered visible?
-- `root?: HTMLElement` __Default: null__ [Root element](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#intersection_observer_concepts_and_usage) passed to `IntersectionObserver`.
-- `children: React.ReactNode` The component(s)/element(s) for which to defer rendering.
+- `defaultHeight?: number` __Default: 300__ - An estimate of the element's height.
+- `visibleOffset?: number` __Default: 1000__ - How far outside the viewport in pixels should elements be considered visible?
+- `root?: HTMLElement` __Default: null__ - [Root element](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#intersection_observer_concepts_and_usage) passed to `IntersectionObserver`.
+- `children: React.ReactNode` - The component(s)/element(s) for which to defer rendering.
