@@ -59,7 +59,8 @@ const RenderIfVisible = ({
       placeholderHeight.current = intersectionRef.current.offsetHeight
     }
   }, [isVisible, intersectionRef])
-
+  const placeholderStyle = { height: placeholderHeight.current };
+  
   return React.createElement(
         rootElement,
         {
