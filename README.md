@@ -53,4 +53,59 @@ export const MyItemList = (items) => (
 - `defaultHeight?: number` __Default: 300__ - An estimate of the element's height.
 - `visibleOffset?: number` __Default: 1000__ - How far outside the viewport (or `root` element) in pixels should elements be considered visible?
 - `root?: HTMLElement` __Default: null__ - [Root element](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#intersection_observer_concepts_and_usage) passed to `IntersectionObserver`.
+- `rootElement?: HTMLElement` __Default: "div"__ - This is the HTML element that will wrap around the children and placeholder. This root element is always present.
+- `placeholderElement?: HTMLElement` __Default: "div"__ - This is the HTML element that will be used for the placeholder. This placeholder element is contained in the root element.
 - `children: React.ReactNode` - The component(s)/element(s) for which to defer rendering.
+
+## Example usage
+When using HTML tables, you can change the default rootElement from "div" to "tbody". For example:
+```javascript
+import React from 'react'
+import RenderIfVisible from 'react-render-if-visible'
+import MyListItem from './list-item' 
+
+const ESTIMATED_ITEM_HEIGHT = 200
+
+export const MyItemList = (items) => (
+  <table className="my-list">
+    <colgroup>
+      <col><col>
+    </colgroup>
+    {items.map(item => (
+      <RenderIfVisible defaultHeight={ESTIMATED_ITEM_HEIGHT} rootElement={"tbody"} placeholderElement={"tr"}>
+        <MyListItem item={item} />
+      </RenderIfVisible>
+    ))}
+  </table>
+)
+```
+The example above, builds a valid HTML table like the one shown below:
+```
+  <table class="my-list">
+    <colgroup>
+      <col><col>
+    </colgroup>
+    <tbody class="renderIfVisible">
+      <tr><td>col1</td><td>col2</td></tr>
+    </tbody>
+    <tbody class="renderIfVisible">
+      <tr><td>col1</td><td>col2</td></tr>
+    </tbody>
+    <tbody class="renderIfVisible">
+      <tr><td>col1</td><td>col2</td></tr>
+    </tbody>
+    <tbody class="renderIfVisible">
+      <tr><td>col1</td><td>col2</td></tr>
+    </tbody>
+    ... (offscreen)
+    <tbody class="renderIfVisible">
+      <tr class="renderIfVisible-placeholder" style="height:200px"></tr>
+    </tbody>
+    <tbody class="renderIfVisible">
+      <tr class="renderIfVisible-placeholder" style="height:200px"></tr>
+    </tbody>
+    <tbody class="renderIfVisible">
+      <tr class="renderIfVisible-placeholder" style="height:200px"></tr>
+    </tbody>
+  </table>
+```
