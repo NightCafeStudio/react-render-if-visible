@@ -9,7 +9,9 @@ type Props = {
   visibleOffset?: number
   root?: HTMLElement | null
   rootElement?: HTMLElement
+  rootElementClass?: string
   placeholderElement?: HTMLElement
+  placeholderElementClass?: string
   children: React.ReactNode
 }
 
@@ -18,7 +20,9 @@ const RenderIfVisible = ({
   visibleOffset = 1000,
   root = null,
   rootElement = "div",
+  rootElementClass = "",
   placeholderElement = "div",
+  placeholderElementClass = "",
   children
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(isServer)
@@ -60,6 +64,8 @@ const RenderIfVisible = ({
     }
   }, [isVisible, intersectionRef])
   const placeholderStyle = { height: placeholderHeight.current };
+  const rootClasses = useMemo(() => `renderIfVisible ${rootElementClass}`, [rootElementClass]);
+  const placeHolderClasses = useMemo(() => `renderIfVisible-placeholder ${placeholderElementClass}`, [placeholderElementClass]);
   
   return React.createElement(
         rootElement,
@@ -68,10 +74,10 @@ const RenderIfVisible = ({
                 ? (<>{children}</>)
                 : React.createElement(
                     placeholderElement,
-                    { className: "renderIfVisible-placeholder", style: placeholderStyle }
+                    { className: placeholderClasses, style: placeholderStyle }
                 ),
             ref: intersectionRef,
-            className: "renderIfVisible",
+            className: rootClasses,
         },
     );
 }
