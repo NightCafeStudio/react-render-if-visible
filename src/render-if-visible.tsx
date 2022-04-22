@@ -7,6 +7,8 @@ type Props = {
   defaultHeight?: number
   /** How far outside the viewport in pixels should elements be considered visible?  */
   visibleOffset?: number
+  /** Should the element stay rendered after it becomes visible? */
+  stayRendered?: boolean
   root?: HTMLElement | null
   children: React.ReactNode
 }
@@ -14,10 +16,12 @@ type Props = {
 const RenderIfVisible = ({
   defaultHeight = 300,
   visibleOffset = 1000,
+  stayRendered = false,
   root = null,
   children
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(isServer)
+  const [wasVisible, setWasVisible] = useState<boolean>(false)
   const placeholderHeight = useRef<number>(defaultHeight)
   const intersectionRef = useRef<HTMLDivElement>(null)
 
@@ -53,12 +57,13 @@ const RenderIfVisible = ({
   useEffect(() => {
     if (intersectionRef.current && isVisible) {
       placeholderHeight.current = intersectionRef.current.offsetHeight
+      setWasVisible(true)
     }
   }, [isVisible, intersectionRef])
 
   return (
     <div ref={intersectionRef}>
-      {isVisible ? (
+      {isVisible || (stayRendered && wasVisible) ? (
         <>{children}</>
       ) : (
         <div style={{ height: placeholderHeight.current }} />
