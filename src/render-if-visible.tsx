@@ -8,6 +8,10 @@ type Props = {
   /** How far outside the viewport in pixels should elements be considered visible?  */
   visibleOffset?: number
   root?: HTMLElement | null
+  rootElement?: HTMLElement
+  rootElementClass?: string
+  placeholderElement?: HTMLElement
+  placeholderElementClass?: string
   children: React.ReactNode
 }
 
@@ -15,6 +19,10 @@ const RenderIfVisible = ({
   defaultHeight = 300,
   visibleOffset = 1000,
   root = null,
+  rootElement = "div",
+  rootElementClass = "",
+  placeholderElement = "div",
+  placeholderElementClass = "",
   children
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(isServer)
@@ -55,16 +63,23 @@ const RenderIfVisible = ({
       placeholderHeight.current = intersectionRef.current.offsetHeight
     }
   }, [isVisible, intersectionRef])
-
-  return (
-    <div ref={intersectionRef}>
-      {isVisible ? (
-        <>{children}</>
-      ) : (
-        <div style={{ height: placeholderHeight.current }} />
-      )}
-    </div>
-  )
+  const placeholderStyle = { height: placeholderHeight.current };
+  const rootClasses = useMemo(() => `renderIfVisible ${rootElementClass}`, [rootElementClass]);
+  const placeHolderClasses = useMemo(() => `renderIfVisible-placeholder ${placeholderElementClass}`, [placeholderElementClass]);
+  
+  return React.createElement(
+        rootElement,
+        {
+            children: isVisible
+                ? (<>{children}</>)
+                : React.createElement(
+                    placeholderElement,
+                    { className: placeholderClasses, style: placeholderStyle }
+                ),
+            ref: intersectionRef,
+            className: rootClasses,
+        },
+    );
 }
 
 export default RenderIfVisible
