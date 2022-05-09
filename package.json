@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "start": "rollup -c -w"
+    "start": "rollup -c -w",
+    "prettier": "prettier --write ./src"
   },
   "dependencies": {},
   "peerDependencies": {
@@ -25,6 +26,7 @@
     "@types/requestidlecallback": "^0.3.1",
     "babel-core": "^6.26.3",
     "babel-runtime": "^6.26.0",
+    "prettier": "^2.6.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "rollup": "^1.29.0",
