@@ -14,11 +14,23 @@ Advantages over other virtualization techniques:
 - Easy to drop in - just wrap your list items with `<RenderIfVisible></RenderIfVisible>`
 - Doesn't require a wrapper around your entire list and doesn't care if other elements are interspersed with the list items
 - Doesn't care how scrolling works for your situation (i.e. is it window scroll, or scrolling within a div with `overflow: scroll`)
-- It is tiny - __46 lines__ - and has no dependencies (apart from React as a peer dependency).
+- It is tiny - __~100 lines__ - and has no dependencies (apart from React as a peer dependency).
 
-This solution has been used successfully in production on [NightCafe Creator](https://creator.nightcafe.studio) for 9+ months.
+This solution has been used successfully in production on [NightCafe Creator](https://creator.nightcafe.studio) for almost 2 years.
 
 Read more about the background and development of this component on [dev.to](https://dev.to/angus_russell/super-simple-list-virtualization-in-react-with-intersectionobserver-3o6g).
+
+## Version 2
+
+### Potentially breaking change - SSR
+
+In v1.x, the component detected when it was being rendered on the server, and set the initial visible state to true. To work with server-side rendering in React 17+, we no-longer detect the server from within the component, but a new prop `initialVisible` is exposed which allows you to control whether the child component should be visible on first render or not. This is intended to be used for things like always rendering the first N components as visible, and the rest as not visible (until they're scrolled into view).
+
+### Other changes in v2
+
+- Works with React 17 and 18
+- A new prop - `stayRendered` (thanks to [cyremur](https://github.com/cyremur)) that will keep the element visible after it's been rendered for the first time
+- New props allow you to specify the type of root and placeholder elements (in versions 1.x they were always divs), which allows you to use this package inside tables, etc
 
 ## Install and integrate in 1 minute
 
@@ -52,6 +64,7 @@ export const MyItemList = (items) => (
 
 - `defaultHeight?: number` __Default: 300__ - An estimate of the element's height.
 - `visibleOffset?: number` __Default: 1000__ - How far outside the viewport (or `root` element) in pixels should elements be considered visible?
+- `stayRendered?: boolean` __Default: false__ - Should the element stay rendered after it becomes visible?
 - `root?: HTMLElement` __Default: null__ - [Root element](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#intersection_observer_concepts_and_usage) passed to `IntersectionObserver`.
 - `rootElement?: HTMLElement` __Default: "div"__ - This is the HTML element that will wrap around the children and placeholder. This root element is always present.
 - `placeholderElement?: HTMLElement` __Default: "div"__ - This is the HTML element that will be used for the placeholder. This placeholder element is contained in the root element.
