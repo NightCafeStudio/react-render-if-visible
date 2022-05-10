@@ -1,8 +1,12 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react'
 
-const isServer = typeof window === 'undefined'
-
 type Props = {
+  /**
+   * Whether the element should be visible initially or not.
+   * Useful e.g. for always setting the first N items to visible.
+   * Default: false
+   */
+  initialVisible?: boolean
   /** An estimate of the element's height */
   defaultHeight?: number
   /** How far outside the viewport in pixels should elements be considered visible?  */
@@ -20,6 +24,7 @@ type Props = {
 }
 
 const RenderIfVisible = ({
+  initialVisible = false,
   defaultHeight = 300,
   visibleOffset = 1000,
   stayRendered = false,
@@ -30,7 +35,7 @@ const RenderIfVisible = ({
   placeholderElementClass = '',
   children,
 }: Props) => {
-  const [isVisible, setIsVisible] = useState<boolean>(isServer)
+  const [isVisible, setIsVisible] = useState<boolean>(initialVisible)
   const [wasVisible, setWasVisible] = useState<boolean>(false)
   const placeholderHeight = useRef<number>(defaultHeight)
   const intersectionRef = useRef<HTMLDivElement>(null)
