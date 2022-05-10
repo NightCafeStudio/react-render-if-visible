@@ -1,6 +1,6 @@
 {
   "name": "react-render-if-visible",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Harness the power of Intersection Observers for simple list virtualization in React",
   "author": "GusRuss89",
   "license": "Apache-2.0",
