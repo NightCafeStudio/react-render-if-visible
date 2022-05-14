@@ -36,25 +36,19 @@ const RenderIfVisible = ({
   children,
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(initialVisible)
-  const [wasVisible, setWasVisible] = useState<boolean>(false)
+  const wasVisible = useRef<boolean>(initialVisible)
   const placeholderHeight = useRef<number>(defaultHeight)
   const intersectionRef = useRef<HTMLDivElement>(null)
-
-  const placeholderStyle = { height: placeholderHeight.current }
-  const rootClasses = useMemo(
-    () => `renderIfVisible ${rootElementClass}`,
-    [rootElementClass]
-  )
-  const placeholderClasses = useMemo(
-    () => `renderIfVisible-placeholder ${placeholderElementClass}`,
-    [placeholderElementClass]
-  )
 
   // Set visibility with intersection observer
   useEffect(() => {
     if (intersectionRef.current) {
       const observer = new IntersectionObserver(
         (entries) => {
+          // Before switching off `isVisible`, set the height of the placeholder
+          if (!entries[0].isIntersecting) {
+            placeholderHeight.current = intersectionRef.current!.offsetHeight
+          }
           if (typeof window !== undefined && window.requestIdleCallback) {
             window.requestIdleCallback(
               () => setIsVisible(entries[0].isIntersecting),
@@ -76,18 +70,26 @@ const RenderIfVisible = ({
       }
     }
     return () => {}
-  }, [intersectionRef])
+  }, [])
 
-  // Set true height for placeholder element after render.
   useEffect(() => {
-    if (intersectionRef.current && isVisible) {
-      placeholderHeight.current = intersectionRef.current.offsetHeight
-      setWasVisible(true)
+    if (isVisible) {
+      wasVisible.current = true
     }
-  }, [isVisible, intersectionRef])
+  }, [isVisible])
+
+  const placeholderStyle = { height: placeholderHeight.current }
+  const rootClasses = useMemo(
+    () => `renderIfVisible ${rootElementClass}`,
+    [rootElementClass]
+  )
+  const placeholderClasses = useMemo(
+    () => `renderIfVisible-placeholder ${placeholderElementClass}`,
+    [placeholderElementClass]
+  )
 
   return React.createElement(rootElement, {
-    children: isVisible || (stayRendered && wasVisible) ? (
+    children: isVisible || (stayRendered && wasVisible.current) ? (
       <>{children}</>
     ) : (
       React.createElement(placeholderElement, {
