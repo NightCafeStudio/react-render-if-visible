@@ -62,12 +62,9 @@ const RenderIfVisible = ({
         },
         { root, rootMargin: `${visibleOffset}px 0px ${visibleOffset}px 0px` }
       )
-      observer.observe(intersectionRef.current)
-      return () => {
-        if (intersectionRef.current) {
-          observer.unobserve(intersectionRef.current)
-        }
-      }
+      const localRef = intersectionRef.current
+      observer.observe(localRef)
+      return () => localRef && observer.unobserve(localRef)
     }
     return () => {}
   }, [])
