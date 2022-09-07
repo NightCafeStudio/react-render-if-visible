@@ -43,11 +43,12 @@ const RenderIfVisible = ({
   // Set visibility with intersection observer
   useEffect(() => {
     if (intersectionRef.current) {
+      const localRef = intersectionRef.current
       const observer = new IntersectionObserver(
         (entries) => {
           // Before switching off `isVisible`, set the height of the placeholder
           if (!entries[0].isIntersecting) {
-            placeholderHeight.current = intersectionRef.current!.offsetHeight
+            placeholderHeight.current = localRef!.offsetHeight
           }
           if (typeof window !== undefined && window.requestIdleCallback) {
             window.requestIdleCallback(
@@ -62,10 +63,11 @@ const RenderIfVisible = ({
         },
         { root, rootMargin: `${visibleOffset}px 0px ${visibleOffset}px 0px` }
       )
-      observer.observe(intersectionRef.current)
+
+      observer.observe(localRef)
       return () => {
-        if (intersectionRef.current) {
-          observer.unobserve(intersectionRef.current)
+        if (localRef) {
+          observer.unobserve(localRef)
         }
       }
     }
