@@ -92,6 +92,7 @@ export const MyItemList = (items) => (
   </table>
 )
 ```
+
 The example above, builds a valid HTML table like the one shown below:
 ```
   <table class="my-list">

@@ -13,7 +13,8 @@
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c -w",
-    "prettier": "prettier --write ./src"
+    "prettier": "prettier --write ./src",
+    "publish": "np"
   },
   "dependencies": {},
   "peerDependencies": {
