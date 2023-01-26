@@ -37,8 +37,38 @@ const RenderIfVisible = ({
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(initialVisible)
   const wasVisible = useRef<boolean>(initialVisible)
-  const placeholderHeight = useRef<number>(defaultHeight)
   const intersectionRef = useRef<HTMLDivElement>(null)
+  const innerRef = useRef<HTMLDivElement>(null)
+
+  const [rootHeight, setRootHeight] = useState<number>(defaultHeight)
+
+  useEffect(() => {
+    if (innerRef.current) {
+      const localRef = innerRef.current
+      const resizeObserver = new ResizeObserver((entries) => {
+        const resizeEntry = entries[0]
+
+        /* Sets the height of the container if the previous value is the default one or if the current value is greater than its previous value */
+        setRootHeight((prev) => {
+          if (
+            (prev === defaultHeight && resizeEntry?.contentRect.height !== 0) ||
+            resizeEntry?.contentRect.height > prev
+          ) {
+            return resizeEntry?.contentRect.height
+          }
+          return prev
+        })
+      })
+
+      resizeObserver.observe(localRef)
+      return () => {
+        if (localRef) {
+          resizeObserver.unobserve(localRef)
+        }
+      }
+    }
+    return () => {}
+  }, [innerRef, setRootHeight, defaultHeight])
 
   // Set visibility with intersection observer
   useEffect(() => {
@@ -46,10 +76,6 @@ const RenderIfVisible = ({
       const localRef = intersectionRef.current
       const observer = new IntersectionObserver(
         (entries) => {
-          // Before switching off `isVisible`, set the height of the placeholder
-          if (!entries[0].isIntersecting) {
-            placeholderHeight.current = localRef!.offsetHeight
-          }
           if (typeof window !== undefined && window.requestIdleCallback) {
             window.requestIdleCallback(
               () => setIsVisible(entries[0].isIntersecting),
@@ -80,7 +106,8 @@ const RenderIfVisible = ({
     }
   }, [isVisible])
 
-  const placeholderStyle = { height: placeholderHeight.current }
+  const rootStyle = useMemo(() => ({ height: `${rootHeight}px` }), [rootHeight])
+
   const rootClasses = useMemo(
     () => `renderIfVisible ${rootElementClass}`,
     [rootElementClass]
@@ -91,16 +118,20 @@ const RenderIfVisible = ({
   )
 
   return React.createElement(rootElement, {
-    children: isVisible || (stayRendered && wasVisible.current) ? (
-      <>{children}</>
-    ) : (
-      React.createElement(placeholderElement, {
-        className: placeholderClasses,
-        style: placeholderStyle,
-      })
+    children: (
+      <div ref={innerRef} style={{ overflow: 'auto' }}>
+        {isVisible || (stayRendered && wasVisible.current) ? (
+          <>{children}</>
+        ) : (
+          React.createElement(placeholderElement, {
+            className: placeholderClasses,
+          })
+        )}
+      </div>
     ),
     ref: intersectionRef,
     className: rootClasses,
+    style: rootStyle,
   })
 }
 
