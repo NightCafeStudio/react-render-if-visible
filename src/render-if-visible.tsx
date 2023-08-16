@@ -7,8 +7,10 @@ type Props = {
    * Default: false
    */
   initialVisible?: boolean
-  /** An estimate of the element's height */
-  defaultHeight?: number
+  /** An estimate of the element's virtualized axis size (e.g. height for vertical scroll) */
+  defaultSize?: number
+  /** Default = 'vertical' */
+  direction?: 'vertical' | 'horizontal'
   /** How far outside the viewport in pixels should elements be considered visible?  */
   visibleOffset?: number
   /** Should the element stay rendered after it becomes visible? */
@@ -25,7 +27,8 @@ type Props = {
 
 const RenderIfVisible = ({
   initialVisible = false,
-  defaultHeight = 300,
+  defaultSize = 300,
+  direction = 'vertical',
   visibleOffset = 1000,
   stayRendered = false,
   root = null,
@@ -37,7 +40,7 @@ const RenderIfVisible = ({
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(initialVisible)
   const wasVisible = useRef<boolean>(initialVisible)
-  const placeholderHeight = useRef<number>(defaultHeight)
+  const placeholderSize = useRef<number>(defaultSize)
   const intersectionRef = useRef<HTMLDivElement>(null)
 
   // Set visibility with intersection observer
@@ -46,9 +49,12 @@ const RenderIfVisible = ({
       const localRef = intersectionRef.current
       const observer = new IntersectionObserver(
         (entries) => {
-          // Before switching off `isVisible`, set the height of the placeholder
+          // Before switching off `isVisible`, set the size of the placeholder
           if (!entries[0].isIntersecting) {
-            placeholderHeight.current = localRef!.offsetHeight
+            placeholderSize.current =
+              direction === 'vertical'
+                ? localRef!.offsetHeight
+                : localRef!.offsetWidth
           }
           if (typeof window !== undefined && window.requestIdleCallback) {
             window.requestIdleCallback(
@@ -61,7 +67,13 @@ const RenderIfVisible = ({
             setIsVisible(entries[0].isIntersecting)
           }
         },
-        { root, rootMargin: `${visibleOffset}px 0px ${visibleOffset}px 0px` }
+        {
+          root,
+          rootMargin:
+            direction === 'vertical'
+              ? `${visibleOffset}px 0px ${visibleOffset}px 0px`
+              : `0px ${visibleOffset}px 0px ${visibleOffset}px`,
+        }
       )
 
       observer.observe(localRef)
@@ -72,7 +84,7 @@ const RenderIfVisible = ({
       }
     }
     return () => {}
-  }, [])
+  }, [direction])
 
   useEffect(() => {
     if (isVisible) {
@@ -80,7 +92,10 @@ const RenderIfVisible = ({
     }
   }, [isVisible])
 
-  const placeholderStyle = { height: placeholderHeight.current }
+  const placeholderStyle =
+    direction === 'vertical'
+      ? { height: placeholderSize.current }
+      : { width: placeholderSize.current }
   const rootClasses = useMemo(
     () => `renderIfVisible ${rootElementClass}`,
     [rootElementClass]
@@ -91,14 +106,15 @@ const RenderIfVisible = ({
   )
 
   return React.createElement(rootElement, {
-    children: isVisible || (stayRendered && wasVisible.current) ? (
-      <>{children}</>
-    ) : (
-      React.createElement(placeholderElement, {
-        className: placeholderClasses,
-        style: placeholderStyle,
-      })
-    ),
+    children:
+      isVisible || (stayRendered && wasVisible.current) ? (
+        <>{children}</>
+      ) : (
+        React.createElement(placeholderElement, {
+          className: placeholderClasses,
+          style: placeholderStyle,
+        })
+      ),
     ref: intersectionRef,
     className: rootClasses,
   })
