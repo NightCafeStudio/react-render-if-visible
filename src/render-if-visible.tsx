@@ -72,7 +72,7 @@ const RenderIfVisible = ({
       }
     }
     return () => {}
-  }, [])
+  }, [root, visibleOffset])
 
   useEffect(() => {
     if (isVisible) {
