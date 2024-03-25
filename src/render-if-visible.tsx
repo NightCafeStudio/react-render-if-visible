@@ -17,9 +17,11 @@ type Props = {
   /** E.g. 'span', 'tbody'. Default = 'div' */
   rootElement?: string
   rootElementClass?: string
+  placeholder?: JSX.Element
   /** E.g. 'span', 'tr'. Default = 'div' */
   placeholderElement?: string
   placeholderElementClass?: string
+  idleTimeout?: number
   children: React.ReactNode
 }
 
@@ -31,8 +33,10 @@ const RenderIfVisible = ({
   root = null,
   rootElement = 'div',
   rootElementClass = '',
+  placeholder,
   placeholderElement = 'div',
   placeholderElementClass = '',
+  idleTimeout = 600,
   children,
 }: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(initialVisible)
@@ -54,7 +58,7 @@ const RenderIfVisible = ({
             window.requestIdleCallback(
               () => setIsVisible(entries[0].isIntersecting),
               {
-                timeout: 600,
+                timeout: idleTimeout,
               }
             )
           } else {
@@ -91,14 +95,16 @@ const RenderIfVisible = ({
   )
 
   return React.createElement(rootElement, {
-    children: isVisible || (stayRendered && wasVisible.current) ? (
-      <>{children}</>
-    ) : (
-      React.createElement(placeholderElement, {
-        className: placeholderClasses,
-        style: placeholderStyle,
-      })
-    ),
+    children:
+      isVisible || (stayRendered && wasVisible.current) ? (
+        <>{children}</>
+      ) : (
+        placeholder ??
+        React.createElement(placeholderElement, {
+          className: placeholderClasses,
+          style: placeholderStyle,
+        })
+      ),
     ref: intersectionRef,
     className: rootClasses,
   })

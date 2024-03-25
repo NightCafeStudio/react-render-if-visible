@@ -1,4 +1,5 @@
 # React RenderIfVisible
+
 Harness the power of Intersection Observers for simple list virtualization in React.
 
 This tiny React component is a drop-in list virtualization alternative that defers rendering of its children until it is on or near the screen. Unlike other virtualization libraries, it takes about one minute to integrate and doesn't require you to change your code other than wrapping each item in `<RenderIfVisible></RenderIfVisible>`.
@@ -14,7 +15,7 @@ Advantages over other virtualization techniques:
 - Easy to drop in - just wrap your list items with `<RenderIfVisible></RenderIfVisible>`
 - Doesn't require a wrapper around your entire list and doesn't care if other elements are interspersed with the list items
 - Doesn't care how scrolling works for your situation (i.e. is it window scroll, or scrolling within a div with `overflow: scroll`)
-- It is tiny - __~100 lines__ - and has no dependencies (apart from React as a peer dependency).
+- It is tiny - **~100 lines** - and has no dependencies (apart from React as a peer dependency).
 
 This solution has been used successfully in production on [NightCafe Creator](https://creator.nightcafe.studio) for almost 2 years.
 
@@ -45,13 +46,13 @@ Then, import the component and wrap each child with it.
 ```javascript
 import React from 'react'
 import RenderIfVisible from 'react-render-if-visible'
-import MyListItem from './list-item' 
+import MyListItem from './list-item'
 
 const ESTIMATED_ITEM_HEIGHT = 200
 
 export const MyItemList = (items) => (
   <div className="my-list">
-    {items.map(item => (
+    {items.map((item) => (
       <RenderIfVisible defaultHeight={ESTIMATED_ITEM_HEIGHT}>
         <MyListItem item={item} />
       </RenderIfVisible>
@@ -62,20 +63,24 @@ export const MyItemList = (items) => (
 
 ## Props
 
-- `defaultHeight?: number` __Default: 300__ - An estimate of the element's height.
-- `visibleOffset?: number` __Default: 1000__ - How far outside the viewport (or `root` element) in pixels should elements be considered visible?
-- `stayRendered?: boolean` __Default: false__ - Should the element stay rendered after it becomes visible?
-- `root?: HTMLElement` __Default: null__ - [Root element](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#intersection_observer_concepts_and_usage) passed to `IntersectionObserver`.
-- `rootElement?: HTMLElement` __Default: "div"__ - This is the HTML element that will wrap around the children and placeholder. This root element is always present.
-- `placeholderElement?: HTMLElement` __Default: "div"__ - This is the HTML element that will be used for the placeholder. This placeholder element is contained in the root element.
+- `defaultHeight?: number` **Default: 300** - An estimate of the element's height.
+- `visibleOffset?: number` **Default: 1000** - How far outside the viewport (or `root` element) in pixels should elements be considered visible?
+- `stayRendered?: boolean` **Default: false** - Should the element stay rendered after it becomes visible?
+- `root?: HTMLElement` **Default: null** - [Root element](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#intersection_observer_concepts_and_usage) passed to `IntersectionObserver`.
+- `rootElement?: HTMLElement` **Default: "div"** - This is the HTML element that will wrap around the children and placeholder. This root element is always present.
+- `placeholder?: JSX.Element` - Pass a React Element as a placeholder. This takes precedence over the `placeholderElement` below.
+- `placeholderElement?: HTMLElement` **Default: "div"** - This is the HTML element that will be used for the placeholder. This placeholder element is contained in the root element.
+- `idleTimeout?: number` **Default: 600** - The timeout to use in window.requestIdleCallback
 - `children: React.ReactNode` - The component(s)/element(s) for which to defer rendering.
 
 ## Example usage
+
 When using HTML tables, you can change the default rootElement from "div" to "tbody". For example:
+
 ```javascript
 import React from 'react'
 import RenderIfVisible from 'react-render-if-visible'
-import MyListItem from './list-item' 
+import MyListItem from './list-item'
 
 const ESTIMATED_ITEM_HEIGHT = 200
 
@@ -94,6 +99,7 @@ export const MyItemList = (items) => (
 ```
 
 The example above, builds a valid HTML table like the one shown below:
+
 ```
   <table class="my-list">
     <colgroup>
